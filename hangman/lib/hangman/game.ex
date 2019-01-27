@@ -23,9 +23,10 @@ defmodule Hangman.Game do
   
   def make_move(game, guess) do
     ( 
-      is_binary(guess) && String.length(guess) == 1 && guess =~ ~r/[a-z]/ && 
-      accept_move( game, guess, MapSet.member?(game.used, guess))
-    ) || 
+      validate_guess(guess) && 
+      accept_move(game, guess, MapSet.member?(game.used, guess)) 
+    )
+    || 
     %{game | game_state: :invalid_guess}
   end
   
@@ -38,6 +39,12 @@ defmodule Hangman.Game do
   end
   
   #########################################################
+  
+  defp validate_guess(guess) do
+    is_binary(guess) && 
+    String.length(guess) == 1 && 
+    guess =~ ~r/[a-z]/
+  end
   
   defp accept_move(game, _guess, _already_guessed = true) do
     Map.put(game, :game_state, :already_used)
